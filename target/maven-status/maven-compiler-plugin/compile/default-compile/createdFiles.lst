@@ -1,0 +1,4 @@
+com\telesrv\plugin\MyPlugin.class
+com\telesrv\bot\MinecraftChatListener.class
+com\telesrv\Main.class
+com\telesrv\bot\MyTelegramBot.class
