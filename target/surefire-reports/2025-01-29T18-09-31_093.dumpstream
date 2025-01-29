@@ -1,0 +1,5 @@
+# Created at 2025-01-29T18:09:31.309
+Boot Manifest-JAR contains absolute paths in classpath 'D:\DOCUMENTS\telesrv\telesrv\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

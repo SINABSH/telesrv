@@ -37,6 +37,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             if (plugin != null) {
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     Bukkit.broadcastMessage("[Telegram] " + senderName + ": " + messageText);
+                    System.out.println("Received Telegram message: " + messageText);
+
                 });
             }
 
