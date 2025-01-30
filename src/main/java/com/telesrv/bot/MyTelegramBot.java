@@ -19,6 +19,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     // Constructor with a Main argument (used when the Main class is required)
     public MyTelegramBot(Main plugin) {
         this.plugin = plugin;
+        System.out.println("Plugin instance assigned: " + plugin);
     }
 
     // No-argument constructor (added to resolve errors during instantiation)
@@ -34,8 +35,20 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             String messageText = update.getMessage().getText();  // Get the text of the received message
             String senderName = update.getMessage().getFrom().getFirstName();  // Get the sender's name
 
+            
+            if (plugin == null) {
+    System.out.println("PLUGIN IS NULL!!!");
+} else {
+    System.out.println("Plugin is fine: " + plugin.getName());
+}
+
+            
+            
+            
             // Broadcast message to Minecraft chat
             if (plugin != null) {
+                System.out.println("Trying to send message to MC chat...");
+                Bukkit.broadcastMessage("[Telegram] " + senderName + ": " + messageText);
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     getLogger().info("miow am i alive");
                     Bukkit.broadcastMessage("[Telegram] " + senderName + ": " + messageText);

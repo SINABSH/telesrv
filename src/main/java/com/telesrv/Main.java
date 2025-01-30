@@ -11,18 +11,20 @@ import com.telesrv.bot.MinecraftChatListener;
 import com.telesrv.bot.MyTelegramBot;
 
 public class Main extends JavaPlugin {
+    private MyTelegramBot telegramBot; // Store telegramBot globally
 
     @Override
-    @SuppressWarnings("CallToPrintStackTrace")
+    //@SuppressWarnings("CallToPrintStackTrace")
     public void onEnable() {
         getLogger().info("Plugin enabled!");
 
         // Initialize Telegram Bot
-        MyTelegramBot telegramBot = new MyTelegramBot();
+        telegramBot = new MyTelegramBot(this);
         TelegramBotsApi botsApi = null;
         try {
             botsApi = new TelegramBotsApi(DefaultBotSession.class);
         } catch (TelegramApiException ex) {
+            getLogger().severe("Error initializing TelegramBotsApi: " + ex.getMessage());
         }
         try {
             if (botsApi != null) {
@@ -44,4 +46,7 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         getLogger().info("Plugin disabled!");
     }
+     public MyTelegramBot getTelegramBot() {
+        return telegramBot;
+     }
 }
