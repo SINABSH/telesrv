@@ -1,6 +1,7 @@
 package com.telesrv.bot;
 
 
+import static org.bukkit.Bukkit.getLogger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -32,10 +33,12 @@ public class MinecraftChatListener implements Listener {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId("@yourTelegramGroupChatId"); // Replace with your group chat ID
         sendMessage.setText(playerName + ": " + message);
+        
 
         try {
             telegramBot.execute(sendMessage); // Send message to Telegram group
         } catch (TelegramApiException e) {
+            getLogger().info("is it in it?");
         }
     }
 }

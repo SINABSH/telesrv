@@ -37,6 +37,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             // Broadcast message to Minecraft chat
             if (plugin != null) {
                 Bukkit.getScheduler().runTask(plugin, () -> {
+                    getLogger().info("miow am i alive");
                     Bukkit.broadcastMessage("[Telegram] " + senderName + ": " + messageText);
                     System.out.println("Received Telegram message: " + messageText);
 
@@ -52,7 +53,9 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             
             try {
                 execute(message);
+                getLogger().info("its in it");
             } catch (TelegramApiException e) {
+                getLogger().info("its  not in it");
                 e.printStackTrace();
             }
         }
