@@ -1,6 +1,7 @@
 package com.telesrv.bot;
 
 import org.bukkit.Bukkit;
+import static org.bukkit.Bukkit.getLogger;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -47,6 +48,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             SendMessage message = new SendMessage();
             message.setChatId(String.valueOf(chatId));
             message.setText("Message delivered to Minecraft!");
+            getLogger().info(chatId + " " + messageText);
+            
             try {
                 execute(message);
             } catch (TelegramApiException e) {

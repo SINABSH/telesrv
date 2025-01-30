@@ -1,5 +1,6 @@
 package com.telesrv.bot;
 
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -20,6 +21,7 @@ public class MinecraftChatListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         String playerName = event.getPlayer().getName();
         String message = event.getMessage();
+        
 
         // Send the Minecraft chat message to the Telegram group
         sendToTelegram(playerName, message);
