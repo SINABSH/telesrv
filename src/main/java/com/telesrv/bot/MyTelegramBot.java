@@ -1,74 +1,49 @@
 package com.telesrv.bot;
 
 import org.bukkit.Bukkit;
-import static org.bukkit.Bukkit.getLogger;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import com.telesrv.Main;
+import com.telesrv.plugin.MyPlugin;
 
 public class MyTelegramBot extends TelegramLongPollingBot {
 
-    private String botUsername = "SCP secret laboratory";  // Replace with your bot's username
-    private String botToken = "7991087130:AAFAHiiAJyWdqLxGEDel_Fw-OFotQ_gns18";    // Replace with your bot's API token
+    private String botUsername = "SCP secret laboratory";  
+    private String botToken = "7991087130:AAFAHiiAJyWdqLxGEDel_Fw-OFotQ_gns18";    
 
-    private final Main plugin;
+    private final MyPlugin plugin;
 
-    // Constructor with a Main argument (used when the Main class is required)
-    public MyTelegramBot(Main plugin) {
+    
+    public MyTelegramBot(MyPlugin plugin) {
         this.plugin = plugin;
-        System.out.println("Plugin instance assigned: " + plugin);
-    }
-
-    // No-argument constructor (added to resolve errors during instantiation)
-    public MyTelegramBot() {
-        this.plugin = null; // Set to null if not used
+        
     }
 
     @Override
     @SuppressWarnings("CallToPrintStackTrace")
     public void onUpdateReceived(Update update) {
-        // Check if the update has a message
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();  // Get the text of the received message
-            String senderName = update.getMessage().getFrom().getFirstName();  // Get the sender's name
+            String messageText = update.getMessage().getText();
+            String senderName = update.getMessage().getFrom().getFirstName();
 
             
             if (plugin == null) {
-    System.out.println("PLUGIN IS NULL!!!");
-} else {
-    System.out.println("Plugin is fine: " + plugin.getName());
-}
-
-            
-            
-            
-            // Broadcast message to Minecraft chat
-            if (plugin != null) {
-                System.out.println("Trying to send message to MC chat...");
-                Bukkit.broadcastMessage("[Telegram] " + senderName + ": " + messageText);
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    getLogger().info("miow am i alive");
-                    Bukkit.broadcastMessage("[Telegram] " + senderName + ": " + messageText);
-                    System.out.println("Received Telegram message: " + messageText);
-
-                });
+                return;
             }
 
-            // Optionally, send a reply back to Telegram
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                Bukkit.broadcastMessage("[Telegram] " + senderName + ": " + messageText);
+            });
+
             long chatId = update.getMessage().getChatId();
             SendMessage message = new SendMessage();
             message.setChatId(String.valueOf(chatId));
-            message.setText("Message delivered to Minecraft!");
-            getLogger().info(chatId + " " + messageText);
-            
+
             try {
                 execute(message);
-                getLogger().info("its in it");
             } catch (TelegramApiException e) {
-                getLogger().info("its  not in it");
                 e.printStackTrace();
             }
         }
@@ -84,8 +59,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         return botToken;
     }
 
-    // Method for sending messages to Telegram from Minecraft
-    @SuppressWarnings("CallToPrintStackTrace")
     public void sendMessageToTelegram(String text) {
         long chatId = -1002399038601L; // Your Telegram chat ID
         SendMessage message = new SendMessage();
@@ -96,13 +69,5 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setBotUsername(String botUsername) {
-        this.botUsername = botUsername;
-    }
-
-    public void setBotToken(String botToken) {
-        this.botToken = botToken;
     }
 }
