@@ -1,4 +1,4 @@
 name: telesrv
-version: 137
+version: 141
 main: com.telesrv.plugin.MyPlugin
 api-version: 1.21.4
