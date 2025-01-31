@@ -11,15 +11,17 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class DiscordBot extends ListenerAdapter {
-    private final String discordToken = "MTMzNDg2OTg3NTMyMzA0ODAyOA.GRy5Lq.81oSIudZV9iL2zhNfMn4_g6wpKn5pQpW7yhRCQ";
-    private final String discordChannelId = "1280079130830049333";
+    private final String discordToken;
+    private final String discordChannelId;
     private final MyPlugin mainPlugin;
-    private final MyTelegramBot telegramBot; // Reference to Telegram bot
+    private final MyTelegramBot telegramBot;
     private JDA jda;
 
-    public DiscordBot(MyPlugin plugin, MyTelegramBot telegramBot) {
+    public DiscordBot(MyPlugin plugin, MyTelegramBot telegramBot, String discordToken, String discordChannelId) {
         this.mainPlugin = plugin;
         this.telegramBot = telegramBot;
+        this.discordToken = discordToken;
+        this.discordChannelId = discordChannelId;
     }
 
     public void startBot() {
@@ -27,9 +29,13 @@ public class DiscordBot extends ListenerAdapter {
             jda = JDABuilder.createDefault(discordToken)
                     .addEventListeners(this)
                     .build();
-            System.out.println("Discord bot started successfully!");
-        } catch (LoginException e) {
-            System.out.println("Error initializing Discord bot: " + e.getMessage());
+            
+            // Wait for JDA to be ready before using it
+            jda.awaitReady();
+            
+            System.out.println("✅ Discord bot started successfully!");
+        } catch (LoginException | InterruptedException e) {
+            System.out.println("❌ Error initializing Discord bot: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -39,17 +45,19 @@ public class DiscordBot extends ListenerAdapter {
         if (event.getAuthor().isBot()) return; // Ignore bot messages
 
         String content = "[Discord] " + event.getAuthor().getName() + ": " + event.getMessage().getContentDisplay();
-        
+
         // Send to Minecraft
         mainPlugin.sendMessageToMinecraft(content);
 
-        // Send to Telegram
-        telegramBot.sendMessageToTelegram(content);
+        // Send to Telegram (if Telegram bot is initialized)
+        if (telegramBot != null) {
+            telegramBot.sendMessageToTelegram(content);
+        }
     }
 
     public void sendMessageToDiscord(String messageContent) {
         if (jda == null) {
-            System.out.println("JDA instance is not initialized!");
+            System.out.println("❌ JDA instance is not initialized!");
             return;
         }
 
@@ -57,7 +65,8 @@ public class DiscordBot extends ListenerAdapter {
         if (channel != null) {
             channel.sendMessage(messageContent).queue();
         } else {
-            System.out.println("Discord channel not found!");
+            System.out.println("❌ Discord channel not found!");
         }
     }
+    
 }

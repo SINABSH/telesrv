@@ -3,6 +3,8 @@ package com.telesrv.plugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -11,24 +13,32 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import com.telesrv.bot.DiscordBot;
 import com.telesrv.bot.MinecraftChatListener;
 import com.telesrv.bot.MyTelegramBot;
+import com.telesrv.utils.ConfigLoader;
 
 public class MyPlugin extends JavaPlugin implements Listener {
     private MyTelegramBot myTelegramBot;
     private DiscordBot discordBot;
 
+    // Discord bot credentials
+    private final String discordToken = ConfigLoader.get("discord.token");
+    private final String discordChannelId = ConfigLoader.get("discord.channelId");
+
+
     @Override
     public void onEnable() {
-        getLogger().info("Telesrv Plugin is starting!");
+        getLogger().info("✅ Telesrv Plugin is starting!");
 
-        // Initialize Telegram bot
-        myTelegramBot = new MyTelegramBot(this, null); // Temporarily set DiscordBot as null
-        
-        // Initialize Discord bot
-        discordBot = new DiscordBot(this, myTelegramBot);
+        // Initialize Telegram bot (but don't set Discord bot yet)
+        myTelegramBot = new MyTelegramBot(this, null);
+
+        // Initialize Discord bot with token & channel ID
+        String discordToken = ConfigLoader.get("DISCORD_TOKEN");
+        String discordChannelId = ConfigLoader.get("DISCORD_CHANNEL_ID");
+
         discordBot.startBot();
 
-        // Now set TelegramBot's Discord reference
-        myTelegramBot = new MyTelegramBot(this, discordBot);
+        // Now update Telegram bot with Discord reference
+        myTelegramBot.setDiscordBot(discordBot);
 
         // Register Minecraft chat listener
         getServer().getPluginManager().registerEvents(new MinecraftChatListener(myTelegramBot), this);
@@ -45,7 +55,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        getLogger().info("Telesrv Plugin is stopping!");
+        getLogger().info("❌ Telesrv Plugin is stopping!");
         myTelegramBot = null;
         discordBot = null;
     }
@@ -59,9 +69,35 @@ public class MyPlugin extends JavaPlugin implements Listener {
         String message = event.getPlayer().getName() + ": " + event.getMessage();
 
         // Send message to Telegram
-        myTelegramBot.sendMessageToTelegram("[Minecraft] " + message);
+        if (myTelegramBot != null) {
+            myTelegramBot.sendMessageToTelegram("[Minecraft] " + message);
+        }
 
         // Send message to Discord
-        discordBot.sendMessageToDiscord("[Minecraft] " + message);
+        if (discordBot != null) {
+            discordBot.sendMessageToDiscord("[Minecraft] " + message);
+        }
     }
+
+    @EventHandler
+public void onPlayerJoin(PlayerJoinEvent event) {
+    String message = event.getPlayer().getName() + " has joined the server!";
+    
+     // Send to Telegram (log channel)
+    myTelegramBot.sendMessageToTelegram("[Telegram Console] " + message);
+    
+    // Send to Discord (log channel)
+    discordBot.sendMessageToDiscord("[Discord Console] " + message);
+}
+
+@EventHandler
+public void onPlayerQuit(PlayerQuitEvent event) {
+    String message = event.getPlayer().getName() + " has left the server!";
+    // Send to Telegram (log channel)
+    myTelegramBot.sendMessageToTelegram("[Telegram Console] " + message);
+    
+    // Send to Discord (log channel)
+    discordBot.sendMessageToDiscord("[Discord Console] " + message);
+}
+
 }
