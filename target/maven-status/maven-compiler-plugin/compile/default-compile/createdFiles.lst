@@ -1,5 +1,4 @@
-com\telesrv\bot\MyTelegramBot.class
 com\telesrv\plugin\MyPlugin.class
 com\telesrv\bot\MinecraftChatListener.class
-com\telesrv\utils\ConfigLoader.class
 com\telesrv\bot\DiscordBot.class
+com\telesrv\bot\MyTelegramBot.class

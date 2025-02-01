@@ -3,17 +3,15 @@ package com.telesrv.bot;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.telesrv.plugin.MyPlugin;
-import com.telesrv.utils.ConfigLoader;
 
 public class MyTelegramBot extends TelegramLongPollingBot {
-    private final String botToken = ConfigLoader.get("telegram.token");
-    private final String chatId = ConfigLoader.get("telegram.chatId");
+    private final String botToken = "7991087130:AAFAHiiAJyWdqLxGEDel_Fw-OFotQ_gns18"; // Replace with actual bot token
+    private final String chatId = "-1002399038601"; // Replace with actual chat ID
     private final MyPlugin mainPlugin;
-    private DiscordBot discordBot; // ❌ Removed 'final' so we can set it later
+    private final DiscordBot discordBot; // Add reference to Discord bot
 
     public MyTelegramBot(MyPlugin plugin, DiscordBot discordBot) {
         this.mainPlugin = plugin;
@@ -31,36 +29,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             // Send message to Minecraft
             mainPlugin.sendMessageToMinecraft(formattedMessage);
 
-            // ✅ Check if Discord bot is set before sending message
-            if (discordBot != null) {
-                discordBot.sendMessageToDiscord(formattedMessage);
-            } else {
-                System.out.println("⚠ Warning: Discord bot is not initialized yet!");
-            }
-
-            
-        }
-        if (update.hasMessage() && update.getMessage().getNewChatMembers() != null) {
-        for (User member : update.getMessage().getNewChatMembers()) {
-            String welcomeMessage = member.getFirstName() + " has joined the Telegram group!";
-            
-            // Send message to Minecraft and Discord
-            mainPlugin.sendMessageToMinecraft("[Minecraft] " + welcomeMessage);
-            discordBot.sendMessageToDiscord("[Discord Console] " + welcomeMessage);
+            // Send message to Discord
+            discordBot.sendMessageToDiscord(formattedMessage);
         }
     }
-
-    // Detect when members leave the chat
-    if (update.hasMessage() && update.getMessage().getLeftChatMember() != null) {
-        String leaveMessage = update.getMessage().getLeftChatMember().getFirstName() + " has left the Telegram group!";
-        
-        // Send message to Minecraft and Discord
-        mainPlugin.sendMessageToMinecraft("[Minecraft] " + leaveMessage);
-        // Send to Discord chat (log)
-        discordBot.sendMessageToDiscord("[Discord Console] " + leaveMessage);
-    }
-}
-    
 
     public void sendMessageToTelegram(String messageContent) {
         SendMessage message = new SendMessage();
@@ -73,20 +45,13 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    // ✅ Setter to properly set Discord bot after initialization
-    public void setDiscordBot(DiscordBot discordBot) {
-        this.discordBot = discordBot;
-    }
-
     @Override
     public String getBotUsername() {
-        return "Scp"; // Replace with actual bot username
+        return "SCP secret laboratory"; // Replace with actual bot username
     }
 
     @Override
     public String getBotToken() {
         return botToken;
     }
-
-    
 }
